@@ -1,4 +1,7 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Exemplo retirado do Site DevMedia no link:
@@ -23,53 +26,65 @@ public class ExemploAssincrono1 {
      *
      * */
 
-
-//    private static final List<Integer> VALORES = Collections.synchronizedList(new ArrayList<>());
-
-    /**
-     * Substituição do List por um Set, que suporta a inserção de valores de modo assíncrono.
-     */
-    private static final Set<Integer> VALORES = new HashSet<>();
+    private static final List<Integer> VALORES = Collections.synchronizedList(new ArrayList<>());
 
     public static void main(String[] args) {
 
-        new Thread(new Runnable() {
+        Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
                 for(int i = 0; i < QUANTIDADE; i++){
-                    boolean novo = VALORES.add(++varCompartilhada);
-                    if(!novo){
-                        System.out.println("Já existe: "+varCompartilhada);
+                    synchronized (VALORES){
+                        VALORES.add(++varCompartilhada);
                     }
                 }
             }
-        }).start();
+        });
 
-        new Thread(new Runnable() {
+        Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean novo = VALORES.add(++varCompartilhada);
-                if(!novo){
-                    System.out.println("Já existe: "+varCompartilhada);
+                for(int i = 0; i < QUANTIDADE; i++){
+                    synchronized (VALORES){
+                        VALORES.add(++varCompartilhada);
+                    }
                 }
             }
-        }).start();
+        });
 
-        new Thread(new Runnable() {
+        Thread t3 = new Thread(new Runnable() {
             @Override
             public void run() {
-                boolean novo = VALORES.add(++varCompartilhada);
-                if(!novo){
-                    System.out.println("Já existe: "+varCompartilhada);
+                for(int i = 0; i < QUANTIDADE; i++){
+                    synchronized (VALORES){
+                        VALORES.add(++varCompartilhada);
+                    }
                 }
             }
-        }).start();
+        });
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        try{
+            t1.join();
+            t2.join();
+            t3.join();
+        }catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        int soma = 0;
+        for(Integer valor : VALORES){
+            soma += valor;
+        }
+
+        System.out.println("Soma: "+soma);
+
     }
 }
 /**
- * Ao processar esse código várias vezes vamos perceber que ele vai imprimir valores que já existem
- * em algumas execuções, demonstrando que as threads estão incrementando a variável, mas que em algum
- * momento, geram o mesmo valor. Isso acontece por conta da concorrência pela variável varCompartilhada
- * de maneira assíncrona(antes de um processo finalizar, outro processo começa), onde ao incrementar essa
- * variável, mais de uma thread acaba gerando o mesmo valor.
+ * Na impossibilidade substituir o ArrayList por um Set, é possível resolver o problema de sincronismo
+ * sincronizando o objeto concorrido
  */
