@@ -1,11 +1,30 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Exemplo retirado do Site DevMedia no link:
+ * https://www.devmedia.com.br/threads-paralelizando-tarefas-com-os-diferentes-recursos-do-java
+ */
 public class ExemploAssincrono1 {
 
     private static int varCompartilhada = 0;
     private static final Integer QUANTIDADE = 10000;
-    private static final List<Integer> VALORES = new ArrayList<>();
+
+    /**
+     * O Exemplo com a lista abaixo gera uma exception, devido a concorrência das threads em adicionar um valor na lista
+     * para solucionar esse problema, a primeira opção é criarmos uma lista sincronizada
+     */
+//    private static final List<Integer> VALORES = new ArrayList<>();
+
+    /**
+     * A solução abaixo, não resolve o problema completamente, ainda é possível haver problemas com a concorrência no
+     * incremento da variável varCompartilhada
+     *
+     * */
+
+    private static final List<Integer> VALORES = Collections.synchronizedList(new ArrayList<>());
 
     public static void main(String[] args) {
 
