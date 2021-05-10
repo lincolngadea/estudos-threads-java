@@ -84,6 +84,12 @@ public class ExemploAssincrono1 {
     }
 }
 /*
- * Na impossibilidade substituir o ArrayList por um Set, é possível resolver o problema de sincronismo
- * sincronizando o objeto concorrido, permitindo que mais de uma thread consiga executa-lo simultaneamente.
- */
+*
+* O ato de adquirir bloqueios para sincronizar threads consome tempo,
+* mesmo quando nenhuma precisa aguardar a liberação do objeto sincronizado.
+* Esse processo é uma faca de dois gumes: se por um lado ele resolve problemas de concorrência,
+* por outro serializa o processamento das threads sobre esse bloco; ou seja,
+* as threads nunca estarão processando esse código simultaneamente, o que pode degradar o desempenho.
+* Portanto, esse recurso deve ser usado com moderação e somente onde for necessário.
+*
+*/
