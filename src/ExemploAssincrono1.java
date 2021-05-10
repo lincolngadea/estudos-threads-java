@@ -12,9 +12,9 @@ public class ExemploAssincrono1 {
     private static int varCompartilhada = 0;
     private static final Integer QUANTIDADE = 10000;
 
-    /**
-     * O Exemplo com a lista abaixo gera uma exception, devido a concorrência das threads em adicionar um valor na lista
-     * para solucionar esse problema, a primeira opção é criarmos uma lista sincronizada
+    /*
+      O Exemplo com a lista abaixo gera uma exception, devido a concorrência das threads em adicionar um valor na lista
+      para solucionar esse problema, a primeira opção é criarmos uma lista sincronizada
      */
 //    private static final List<Integer> VALORES = new ArrayList<>();
 
@@ -33,10 +33,8 @@ public class ExemploAssincrono1 {
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0; i < QUANTIDADE; i++){
-                    synchronized (VALORES){
-                        VALORES.add(++varCompartilhada);
-                    }
+                for (int i = 0; i < QUANTIDADE; i++) {
+                    incrementaEAdd();
                 }
             }
         });
@@ -44,21 +42,18 @@ public class ExemploAssincrono1 {
         Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0; i < QUANTIDADE; i++){
-                    synchronized (VALORES){
-                        VALORES.add(++varCompartilhada);
-                    }
+                for (int i = 0; i < QUANTIDADE; i++) {
+                    incrementaEAdd();
                 }
             }
         });
 
         Thread t3 = new Thread(new Runnable() {
+
             @Override
             public void run() {
-                for(int i = 0; i < QUANTIDADE; i++){
-                    synchronized (VALORES){
-                        VALORES.add(++varCompartilhada);
-                    }
+                for (int i = 0; i < QUANTIDADE; i++) {
+                    incrementaEAdd();
                 }
             }
         });
@@ -83,8 +78,12 @@ public class ExemploAssincrono1 {
         System.out.println("Soma: "+soma);
 
     }
+
+    private synchronized static void incrementaEAdd() {
+             VALORES.add(++varCompartilhada);
+    }
 }
-/**
+/*
  * Na impossibilidade substituir o ArrayList por um Set, é possível resolver o problema de sincronismo
- * sincronizando o objeto concorrido
+ * sincronizando o objeto concorrido, permitindo que mais de uma thread consiga executa-lo simultaneamente.
  */
